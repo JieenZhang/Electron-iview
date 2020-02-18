@@ -20,24 +20,24 @@
 
 <script>
 import { on, off } from '@/libs/tools'
-// const menuList = [
-//   {
-//     key: 'edit',
-//     label: '编辑部门'
-//   },
-//   {
-//     key: 'detail',
-//     label: '查看部门'
-//   },
-//   {
-//     key: 'new',
-//     label: '新增子部门'
-//   },
-//   {
-//     key: 'delete',
-//     label: '删除部门'
-//   }
-// ]
+const menuList = [
+  {
+    key: 'edit',
+    label: '编辑部门'
+  },
+  {
+    key: 'detail',
+    label: '查看部门'
+  },
+  {
+    key: 'new',
+    label: '新增子部门'
+  },
+  {
+    key: 'delete',
+    label: '删除部门'
+  }
+]
 export default {
   name: 'OrgView',
   props: {
@@ -85,7 +85,64 @@ export default {
         : ''
     },
     nodeRender (h, data) {
-      return ''
+      return h('div',
+        {
+          class: [
+            'custom-org-node',
+            data.children && data.children.length ? 'has-children-label' : ''
+          ],
+          props: {
+
+          },
+          on: {
+            'on-mousedown': (event) => {
+              event.stopPropagation()
+            },
+            'on-contextmenu': () => {
+              this.contextmenu.bind(this, data)
+            }
+          }
+        },
+        [
+          data.label,
+          h('dropdown', {
+            class: [
+              'context-menu'
+            ],
+            style: {
+              'transform': `scale(${1 / this.zoomHandled}, ${1 /
+                      this.zoomHandled})`
+            },
+            trigger: 'custom',
+            props: {
+              trigger: 'custom',
+              visible: this.currentContextMenuId === data.id
+            }
+          },
+          [
+            h('dropdown-menu', {
+              props: {
+                slot: 'list'
+              }
+            },
+            [
+              menuList.map(item => {
+                return h('dropdown-item', {
+                  props: {
+                    name: item.key
+                  },
+                  domProps: {
+                    name: item.key
+                  }
+                },
+                [
+                  item.label
+                ])
+              })
+            ])
+          ]
+          )
+        ])
       // return (
       // <div
       //   class={[

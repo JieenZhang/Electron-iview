@@ -1,15 +1,39 @@
 import axios from '@/libs/api.request'
-
+const WfbsClient = require('@/libs/WFBSManagerLib.js').WFBSManagerLib
 export const login = ({ userName, password }) => {
-  const data = {
-    userName,
-    password
-  }
-  return axios.request({
-    url: 'login',
-    data,
-    method: 'post'
+  // const data = {
+  //   userName,
+  //   password
+  // }
+  // return axios.request({
+  //   url: 'login',
+  //   data,
+  //   method: 'post'
+  // })
+  let rt = new Promise((resolve, reject) => {
+    let magLib = new WfbsClient()
+    magLib.Initialize('192.168.10.5', 5526, function (result, data) {
+      if (result) {
+        console.log('初始化成功!')
+        magLib.Login(userName, password, function (result2) {
+          if (result2) {
+            resolve({token: {
+              name: 'super_admin',
+              user_id: '1',
+              access: ['super_admin', 'admin'],
+              token: 'super_admin',
+              avatar: 'https://file.iviewui.com/dist/a0e88e83800f138b94d2414621bd9704.png'
+            }})
+          } else {
+            reject(new Error('用户名或密码错误，登录失败！'))
+          }
+        })
+      } else {
+        reject(new Error(data))
+      }
+    })
   })
+  return rt
 }
 
 export const getUserInfo = (token) => {

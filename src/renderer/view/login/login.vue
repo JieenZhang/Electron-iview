@@ -28,6 +28,7 @@ export default {
       'getUserInfo'
     ]),
     handleSubmit ({ userName, password }) {
+      console.log(process.versions.electron)
       this.handleLogin({ userName, password }).then(res => {
         this.getUserInfo().then(res => {
           this.$router.push({
